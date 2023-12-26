@@ -334,7 +334,6 @@
     <None Include="Areas\Admin\Content\boostrap-theme.css.map" />
     <Content Include="Areas\Admin\Content\boostrap.min.css" />
     <Content Include="Areas\Admin\Views\HomeAdmin\IndexAdmin.cshtml" />
-    <Content Include="Areas\Admin\Views\Shared\Login.cshtml" />
     <Content Include="Areas\Admin\Views\ComicsAdmin\CategoryAdmin.cshtml" />
     <Content Include="Areas\Admin\Views\ComicsAdmin\BookPages.cshtml" />
     <Content Include="Areas\Admin\Views\ComicsAdmin\AccountUser.cshtml" />
