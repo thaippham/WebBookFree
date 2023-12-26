@@ -1,0 +1,83 @@
+﻿@model Đồ_án_của_Thái.Areas.Admin.Models.Chapter
+
+@{
+    ViewBag.Title = "CreateChapterAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Add Chapter</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Thêm trang cho @Model.Comic.NameComic</li>
+    </ol>
+    @using (Html.BeginForm("CreateChapterAdmin", "ComicsAdmin", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Trang, "Trang", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Trang, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Trang, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.PictureChap, "File PDF", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PictureChap, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.PictureChap, "", new { @class = "text-danger" })
+                    <input type="file" name="fileUpload" id="fileUpload" accept="application/pdf" style="display: none;" required />
+                    <input type="button" id="btnUpload" value="Chọn" class="btn btn-success" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+    <div>
+        @Html.ActionLink("Back to List", "IndexAdmin", "HomeAdmin")
+    </div>
+    @section upload
+ {
+        <script>
+            $(function () {
+                $('#btnUpload').click(function () {
+                    $('#fileUpload').trigger('click');
+                });
+            });
+            $('#fileUpload').change(function () {
+                if (window.FormData !== undefined) {
+                    var fileUpload = $('#fileUpload').get(0);
+                    var files = fileUpload.files;
+                    var formData = new FormData();
+                    formData.append('file', files[0]);
+                    $.ajax(
+                        {
+                            type: 'POST',
+                            url: '/Comics/ProcessUpload',
+                            contentType: false,
+                            processData: false,
+                            data: formData,
+                            success: function (urlImage) {
+                                $('#pictureUpload').attr('src', urlImage);
+                                $('#PictureChap').val(urlImage);
+                            },
+                            error: function (err) {
+                                alert('Error ', err.statusText);
+                            }
+                        });
+                }
+            });
+        </script>
+    }
+    <style>
+        input#btnUpload {
+            margin-top: 5px;
+        }
+        .form-group{
+            margin-bottom: 10px;
+        }
+    </style>

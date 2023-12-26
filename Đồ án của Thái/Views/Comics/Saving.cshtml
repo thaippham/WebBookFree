@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Models.Chapter>
+@{
+    ViewBag.Title = "Trang Đã Lưu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="~/Content/stylesheet.css" />
+</head>
+<div class="text-center text-uppercase font-weight-bold">
+    <h2 style="font-weight: bold; margin-top:25px;">Trang đã lưu</h2>
+</div>
+<table class="saved-pages-table">
+    <thead>
+        <tr class="table-header">
+            <th class="name-picture-column">Name/Picture</th>
+            <th class="chapters-column">Chapters</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var save in Model.GroupBy(ch => ch.ComicId))
+        {
+            <tr class="table-row">
+                <td class="name-picture-column">
+                    <h4 class="comic-name">@save.First().Comic.NameComic</h4>
+                    <div class="comic-image-container">
+                        <a href="@Url.Action("Detail", "Comics", new { id = save.First().Comic.Id })">
+                            <img class="comic-image" src="@save.First().Comic.Picture" alt="@save.First().Comic.NameComic" />
+                        </a>
+                    </div>
+                </td>
+                <td class="chapters-column">
+                    @foreach (var chapter in save)
+                    {
+                        <a class="chapter-link" href="@Url.Action("Read", new { id = chapter.Comic.Id, page = chapter.Trang })">Trang @chapter.Trang, </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<style>
+    th, td {
+        border: 1px solid red;
+        padding: 5px;
+    }
+
+    a:hover {
+        color: #ca3433;
+        text-decoration: none;
+    }
+
+    .saved-pages-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-header {
+        text-align: center;
+        font-weight: bold;
+        font-size: 25px;
+        background-color: #f2f2f2;
+    }
+
+    .table-row {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .name-picture-column {
+        width: 30%;
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    .comic-name {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .comic-image-container {
+        text-align: center;
+    }
+
+    .comic-image {
+        width: 110px;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .chapters-column {
+        padding: 10px;
+    }
+
+    .chapter-link {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px;
+        text-decoration: none;
+        color: #333;
+    }
+</style>

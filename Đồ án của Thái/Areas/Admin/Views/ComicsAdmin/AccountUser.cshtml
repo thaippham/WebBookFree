@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Areas.Admin.Models.ApplicationUser>
+@{
+    ViewBag.Title = "Account User";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+</head>
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Account Users</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Users</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Users
+        </div>
+        <div class="card-body">
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Name Account</th>
+                        <th>Email Account</th>
+                        <th>Email Confirm</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Avatar</th>
+                        <th>Name Account</th>
+                        <th>Email Account</th>
+                        <th>Email Confirm</th>
+                        <th>Remove</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var users in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (users.Avatar != null)
+                                {
+                                    <img class="avatar" src="@users.Avatar" />
+                                }
+                                else
+                                {
+                                    <img class="avatar" src="~/Content/images/avatar_user.png" />
+                                }
+                            </td>
+                            <td>
+                                <h4>@users.Name</h4>
+                            </td>
+                            <td>
+                                <h4>@users.Email</h4>
+                            </td>
+                            <td>
+                                <h4>@users.EmailConfirmed</h4>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight-@users.Id" aria-controls="offcanvasRight">
+                                    Xóa Account
+                                </button>
+                                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight-@users.Id" aria-labelledby="offcanvasRightLabel">
+                                    <div class="offcanvas-header">
+                                        <h5 class="offcanvas-title" id="offcanvasRightLabel">Bạn có chắc muôn xóa @users.Name?<br />Email: @users.Email</h5>
+                                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <div style="display: flex; justify-content:center">
+                                            <input type="checkbox" class="sureremove" />
+                                            <strong style="margin: 0 0 2px 2px;">Đồng ý xóa!</strong>
+                                        </div>
+                                        <div style="text-align:right">
+                                            <form action="@Url.Action("DeleteAccountUserConfirm", "ComicsAdmin")" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@users.Id" />
+                                                <input type="submit" id="removeacc" class="btn btn-danger" value="Xóa" disabled />
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    @section scripts{
+        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+        <script>
+            let table = new DataTable('#myTable', {
+                lengthMenu: [
+                    [5, 10, 25, 50, -1],
+                    [5, 10, 25, 50, 'All']
+                ]
+            });
+            document.querySelectorAll('.sureremove').forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    var btnremove = this.closest('.offcanvas').querySelector('.btn-danger');
+                    btnremove.disabled = !this.checked;
+                });
+            });
+        </script>
+    }
+    <style>
+        .avatar {
+            width: 100px;
+            height: auto;
+            border-radius: 50%;
+        }
+    </style>

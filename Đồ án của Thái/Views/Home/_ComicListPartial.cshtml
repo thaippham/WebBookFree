@@ -1,0 +1,88 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Đồ_án_của_Thái.Models.Comic>
+
+<div class="row" id="comicList">
+    @foreach (var comic in Model)
+    {
+        <div class="col-lg-3 col-md-4 col-xs-6 custom-col" style="margin-bottom: 40px;">
+            <div class="text-center clearfix">
+                <div class="card">
+                    <div class="card-details">
+                        <a href="@Url.Action("Detail", "Comics", new {id = comic.Id})">
+                            <img class="img-book" src="@comic.Picture" alt="@comic.NameComic" style="width: 175px; height: 220px; border-radius: 12px;" />
+                        </a>
+                    </div>
+                    <button class="card-button" type="button" data-toggle="modal" data-target="#exampleModal-@comic.Id" style="font-size: 15px;">More info</button>
+                    <div class="modal fade" id="exampleModal-@comic.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="padding: 15px 15px 0px 15px;">
+                                    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" aria-label="Close">
+                                        <span style="font-size: 18px;" aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h5 class="modal-title" id="exampleModalLabel" style="font-size: 40px;">Chi tiết</h5>
+                                </div>
+                                <div class="modal-body text-left">
+                                    <div>
+                                        <h2 style="font-weight: bold;">@comic.NameComic</h2>
+                                        <div>
+                                            <div class="title">
+                                                <h4><b>Tác giả: </b>@comic.Author</h4>
+                                                <h4><b>Mô tả: </b>@comic.Title</h4>
+                                                <h4><b>Thể loại: </b><a style="color: #337ac1;" href="@Url.Action("TheLoai", "Comics", new {id = comic.CategoryId})">@comic.Category.Name</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    @Html.ActionLink("Đọc luôn", "Read", "Comics", new { id = comic.Id, }, new { @class = "btn btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.LoginUser != null)
+                    {
+                        if (comic.isShowFollow)
+                        {
+                            <button data-comic-id="@comic.Id" class="btn btn-success btn-sm js-toggle-follow" style="position: absolute; top: 0; left: 71%; outline: none;" title="Follow Sách"><i class="fa fa-heart"></i></button>
+                        }
+                        else
+                        {
+                            <button data-comic-id="@comic.Id" class="btn btn-danger btn-sm js-toggle-follow" style="position: absolute; top: 0; left: 71%; outline: none;" title="Xóa Follow"><i class="fa fa-heart" style="color: red;"></i></button>
+                        }
+                    }
+                    <p style="margin: 10px 10px 5px 10px; font-size: 12px; color: #535353d6; font-style: italic;">
+                        @string.Format("{0:#,##0} Views", comic.Chapters.Sum(chap => chap.View))
+                    </p>
+                    <div class="rating text-left">
+                        @if (ViewBag.AverageRatings.ContainsKey(comic.Id))
+                        {
+                            var averageRating = ViewBag.AverageRatings[comic.Id];
+                            var fullStars = (int)averageRating;
+                            var remainingStars = averageRating - fullStars;
+
+                            for (int i = 1; i <= fullStars; i++)
+                            {
+                                <span class="fa fa-star checked"></span>
+                            }
+                            if (remainingStars > 0)
+                            {
+                                <span class="fa fa-star-half-alt checked"></span>
+                                fullStars++;
+                            }
+                            for (int i = fullStars + 1; i <= 5; i++)
+                            {
+                                <span class="fa fa-star"></span>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+<div class="pagination-container text-center">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewBag.SearchString, sortOrder = ViewBag.SortOrder }), new PagedListRenderOptions { Display = PagedListDisplayMode.IfNeeded })
+</div>

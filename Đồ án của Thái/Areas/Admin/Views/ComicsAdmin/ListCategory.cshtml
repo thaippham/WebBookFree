@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Areas.Admin.Models.Category>
+
+@{
+    ViewBag.Title = "ListCategory";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+</head>
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            DataTable Example
+        </div>
+        <div class="card-body">
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Category</th>
+                        <th>Edit</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @item.Name
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight-@item.Id" aria-controls="offcanvasRight">
+                                    Sửa
+                                </button>
+                                <form action="@Url.Action("EditCategory", "ComicsAdmin")" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight-@item.Id" aria-labelledby="offcanvasRightLabel">
+                                        <div class="offcanvas-header">
+                                            <h5 class="offcanvas-title" id="offcanvasRightLabel">Sửa @item.Name</h5>
+                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                        </div>
+                                        <div class="offcanvas-body">
+                                            <input class="newcategory" name="Categorynew" type="text" placeholder="Nhập tên thể loại mới" />
+                                            <div>
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <input type="submit" class="btn btn-danger" value="Sửa" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script>
+        let table = new DataTable('#myTable', {
+            lengthMenu: [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, 'All']
+            ]
+        });
+    </script>
+}
+<style>
+    input.newcategory {
+        border-radius: 5px;
+        padding: 4px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+</style>

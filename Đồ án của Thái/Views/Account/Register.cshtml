@@ -1,0 +1,104 @@
+﻿@model Đồ_án_của_Thái.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<head>
+    <link rel="stylesheet" href="~/Content/styless.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nova+Square&display=swap" rel="stylesheet">
+</head>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<link href="~/Content/jscss/iEdit.css" rel="stylesheet" />
+<script src="~/Content/jscss/iEdit.js"></script>
+<style type="text/css">
+    #profilepic {
+        border-radius: 50%;
+        position: relative;
+        width: 150px;
+        height: auto;
+    }
+</style>
+<div class="form-dangnhap">
+    <div class="login-container">
+        <h1 style="font-weight: bold;">REGISTER</h1>
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <label for="Email">Email</label>
+            <input class="form-control" data-val="true" data-val-email="The Email field is not a valid e-mail address." data-val-regex="Email must be a valid MAIL address." data-val-required="The Email field is required." id="Email" name="Email" type="text">
+            <label for="Name">Name</label>
+            <input class="form-control" data-val="true" data-val-length="The field Name must be a string with a maximum length of 255." data-val-length-max="255" data-val-required="The Name field is required." id="Name" name="Name" type="text">
+            <label for="Password">Password</label>
+            <div style="display: flex;">
+                <input class="form-control" data-val="true" data-val-length="The Password must be at least 6 characters long." data-val-length-max="100" data-val-length-min="6" data-val-required="The Password field is required." id="password-input" name="Password" type="password">
+                <button type="button" id="toggle-password" class="btn btn-default" style="background: none; border: none; margin: 0 5px 19px; padding: 0;"><i class="fa fa-eye"></i></button>
+            </div>
+            <label for="ConfirmPassword">Confirm Password</label>
+            <div style="display: flex;">
+                <input class="form-control" data-val="true" data-val-equalto="The password and confirmation password do not match." data-val-equalto-other="*.Password" id="confirm-password-input" name="ConfirmPassword" type="password">
+                <button type="button" id="toggle-confirmpassword" class="btn btn-default" style="background: none; border: none; margin: 0 5px 19px; padding: 0;"><i class="fa fa-eye"></i></button>
+            </div>
+            <label for="Avatar">Avatar</label>
+            <input id="file" accept="image/*" type="file"><input type="hidden" name="imgbase64" id="imgbase64" />
+            <img id="profilepic">
+            <input type="submit" value="Register">
+        }
+        <div class="links">
+            <a href="/Account/Login">You had account. Login</a>
+        </div>
+    </div>
+</div>
+
+        @section Scripts {
+            @Scripts.Render("~/bundles/jqueryval")
+            <script>
+                console.log("Script is running");
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    var passwordInput = document.getElementById("password-input");
+                    var toggleButton = document.getElementById("toggle-password");
+                    toggleButton.addEventListener("click", function () {
+                        if (passwordInput.type === "password") {
+                            passwordInput.type = "text";
+                            toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        } else {
+                            passwordInput.type = "password";
+                            toggleButton.innerHTML = '<i class="fa fa-eye"></i>';
+                        }
+                    });
+                });
+                console.log("Script is running");
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    var passInput = document.getElementById("confirm-password-input");
+                    var toggleButton = document.getElementById("toggle-confirmpassword");
+                    toggleButton.addEventListener("click", function () {
+                        if (passInput.type === "password") {
+                            passInput.type = "text";
+                            toggleButton.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        } else {
+                            passInput.type = "password";
+                            toggleButton.innerHTML = '<i class="fa fa-eye"></i>';
+                        }
+                    });
+                });
+                $(document).ready(function () {
+                    $("#file").change(function (e) {
+                        var img = e.target.files[0];
+                        document.getElementById("profilepic");
+                        if (!iEdit.open(img, true, function (res) {
+                            $("#profilepic").attr("src", res);
+                            document.getElementById("imgbase64").value = res;
+                        })) {
+                            alert("Please check file type !!!");
+                        }
+                    });
+                });
+            </script>
+        }
+        <style>
+            button#toggle-password:focus, button#toggle-confirmpassword:focus {
+                outline: none;
+            }
+        </style>

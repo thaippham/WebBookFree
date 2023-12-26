@@ -1,0 +1,27 @@
+﻿<li style="border: solid 0.5px #0000003b; border-radius: 10px; padding: 10px 20px; margin-bottom: 5px; background-color: rgb(0 0 0 / 33%)">
+    <div class="avatar" style="display:flex;">
+        @if (Model.NameUser.Avatar != null)
+        {
+            <div>
+                <img style="width: 75px; height: auto; border-radius: 50%" src="@Model.NameUser.Avatar" />
+            </div>
+        }
+        else
+        {
+            <div>
+                <img style="width: 75px; height: auto; border-radius: 50%" src="~/Content/images/avatar_user.png" />
+            </div>
+        }
+        <div>
+            <p style="font-weight: bold; color: #abdbff; margin: 0px 10px;">@Model.NameUser.Name said:</p>
+            <p style="margin: 7px 15px 0; color: #ffffffde; font-size: 17px;">- @Model.BinhLuan</p>
+            <div class="rating" style="margin:6px 12px;">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <span class="fa fa-star @(i <= Model.rating ? "checked" : "")"></span>
+                }
+            </div>
+        </div>
+
+    </div>
+</li>

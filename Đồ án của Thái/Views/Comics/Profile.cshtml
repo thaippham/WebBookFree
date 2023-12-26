@@ -1,0 +1,127 @@
+﻿@model Đồ_án_của_Thái.Models.ApplicationUser
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Nova+Square&display=swap" rel="stylesheet">
+</head>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<link href="~/Content/jscss/iEdit.css" rel="stylesheet" />
+<script src="~/Content/jscss/iEdit.js"></script>
+<style type="text/css">
+    #profilepic {
+        position: relative;
+        width: 150px;
+        height: auto;
+    }
+</style>
+<style>
+    li{
+        list-style-type: none;
+    }
+    ul {
+        margin-top: 10px;
+        margin-bottom: 0px;
+        padding: 0;
+    }
+    h1,div > h2, p {
+        margin: 0;
+        padding: 0;
+    }
+
+
+    .profile-card {
+        font-family: 'Nova Square', sans-serif;
+        width: 300px;
+        background-color: #ffffff6b;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin: 20px auto;
+        text-align: center;
+    }
+
+        .profile-card img {
+            width: 150px;
+            height: auto;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-card p {
+            margin-bottom: 10px;
+        }
+
+        .profile-card strong {
+            color: #333;
+        }
+    div > svg.bi.bi-pencil-square {
+        margin: 10px 10px 0 2px;
+    }
+</style>
+
+
+<div class="profile-card">
+    <form action="@Url.Action("ChangeAvatar", "Comics")" method="post" enctype="multipart/form-data">
+        @if (Model.Avatar != null)
+        {
+            <img id="profilepic" src="@Model.Avatar" alt="Avatar">
+            <input id="file" accept="image/*" type="file"><input type="hidden" name="imgbase64" id="imgbase64" />
+        }
+        else
+        {
+            <img id="profilepic" src="~/Content/images/avatar_user.png" alt="Avatar">
+            <input id="file" accept="image/*" type="file"><input type="hidden" name="imgbase64" id="imgbase64" />
+        }
+        <div style="display: flex; justify-content: center;">
+            <h2>@Model.Name</h2>
+            @if (!User.IsInRole("Admin") && !User.IsInRole("Manager") && !User.IsInRole("Employee"))
+            {
+                <svg id="editIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                </svg>
+            }
+        </div>
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <input class="form-control" data-val="true" data-val-length="The field Name must be a string with a maximum length of 255." data-val-length-max="255" data-val-required="The Name field is required." id="Name" name="Name" type="hidden">
+        <p><strong>Email:</strong> @Model.Email</p>
+        <input id="submitButton" type="submit" value="Save" class="btn btn-primary" />
+    </form>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            $("#file").change(function (e) {
+                var img = e.target.files[0];
+                document.getElementById("profilepic");
+                if (!iEdit.open(img, true, function (res) {
+                    $("#profilepic").attr("src", res);
+                    document.getElementById("imgbase64").value = res;
+                })) {
+                    alert("Please check file type !!!");
+                } 
+            });
+        });
+        $(document).ready(function () {
+            $('#editIcon').click(function () {
+                var inputType = $('#Name').attr('type');
+                if (inputType === 'hidden') {
+                    $('#Name').attr('type', 'text');
+                    $('#Name').val($('#displayName').text());
+                    $('#displayName').hide();
+                    $('#editIcon path').attr('fill', 'blue');
+                } else if (inputType === 'text') {
+                    $('#Name').attr('type', 'hidden');
+                    $('#displayName').show();
+                    $('#editIcon path').attr('fill', 'black');
+                }
+            });
+        });
+    </script>
+}

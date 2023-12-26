@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="shortcut icon" href="~/Content/images/book.png" />
+    <link rel="stylesheet" href="~/Content/icon.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            background-image: url('/Content/images/blurry_backgrounddd.png');
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="more options">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="@Url.Action("Index", "Home")">
+                    <img style="height: 50px; margin-bottom: 5px;" src="~/Content/images/book-freelogo.png" alt="logo" />
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Trang Chủ", "Index", "Home", new { area = "" }, null)</li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle"
+                           data-toggle="dropdown"
+                           role="button"
+                           aria-haspopup="true"
+                           aria-expanded="false">
+                            Thể Loại
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <li class="theloai"><a href="@Url.Action("TheLoai", "Comics", new {id = category.Id})">@category.Name</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li>@Html.ActionLink("Xếp hạng", "RankingWeek", "Comics", null, null)</li>
+                    <li class="search">
+                        @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+                        {
+                            <div style="display: flex; margin-top: 10px;">
+                                <input type="text" name="searchString" class="form-control" placeholder="Search name book or name author..."
+                                       onclick="clearPlaceholder(this)"
+                                       onblur="restorePlaceholder(this)"
+                                       style="flex: 1; border-radius: 4px 0 0 4px; border: 1px solid #ccc; padding: 8px; width: 265px;">
+                                <button type="submit" class="btn btn-primary"
+                                        style="border-radius: 0 4px 4px 0; padding: 7px 12px; background-color: #007bff; border: none; color: white; cursor: pointer; outline: none;">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
+                        }
+                    </li>
+                </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+        <main class="container">
+            @RenderBody()
+        </main>
+        <div style="background-color: #383838fc; color: #aaa9a9; ">
+            <footer class="py-3 my-4">
+                <div class="container-fluid text-left text-md-left">
+                    <div class="row">
+                        <div class="col-md-5 mt-md-0 mt-3">
+                            <h4 class="text-uppercase font-weight-bold">About us</h4>
+                            <p>
+                                Welcome to WebBookFree – where the passion for reading is seamlessly combined with the convenience of free access. We are committed to providing the best reading experiences for our community of readers by offering a diverse and rich collection of renowned literary works. At WebBookFree, you're not just reading books; you're also exploring and sharing your love for reading. Join us on a journey to discover the boundless world of knowledge and inspire through every page of a book.
+                            </p>
+
+                        </div>
+                        <div class="col-md-3 mb-md-0 mb-3">
+                            <h4 class="text-uppercase font-weight-bold">Technology used</h4>
+                            <p>
+                                API Acount Google<br />
+                                Boostrap, jQuery<br />
+                                ASP.NET Identity<br />
+                                Razor
+                            </p>
+                            <h4 class="text-uppercase font-weight-bold">Language used</h4>
+                            <p>
+                                C#<br />
+                                HTML<br />
+                                CSS<br />
+                                JavaScript
+                            </p>
+                        </div>
+                        <div class="col-md-4 mb-md-0 mb-3">
+                            <h4 class="text-uppercase font-weight-bold">Project implementation</h4>
+                            <p>
+                                Thai Pham<br />
+                                Babu
+                            </p>
+                            <h4 class="text-uppercase font-weight-bold">Contact</h4>
+                            <p>
+                                <i class="fa fa-map-marker px-2"></i>
+                                District 9, Thu Duc City, VietNam.
+                            </p>
+                            <p>
+                                <i class="fas fa-phone px-2"></i>
+                                +84 333 131 801
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="text-uppercase font-weight-bold text-center">Follow us</h4>
+                <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                    <li class="nav-item"><a href="#" class="fab fa-facebook-f px-2"></a></li>
+                    <li class="nav-item"><a href="#" class="fab fa-github px-2"></a></li>
+                    <li class="nav-item"><a href="#" class="fab fa-google-plus-g px-2"></a></li>
+                    <li class="nav-item"><a href="#" class="fab fa-instagram px-2"></a></li>
+                    <li class="nav-item"><a href="#" class="fab fa-pinterest px-2"></a></li>
+                </ul>
+                <div class="footer-copyright text-center py-3">
+                    © 2023 Design by:
+                    <a href="/"> ThaiPham</a>
+                </div>
+            </footer>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+        @RenderSection("upload", required: false)
+        @RenderSection("count", required: false)
+    </body>
+</html>
+<script>
+    function clearPlaceholder(element) {
+        element.placeholder = '';
+    }
+
+    function restorePlaceholder(element) {
+        if (element.value === '') {
+            element.placeholder = 'Search name book or name author...';
+        }
+    }
+</script>
+<style>
+    
+    .navbar-nav > li > .dropdown-menu {
+        background-color: #ffffff75;
+        backdrop-filter: blur(10px);
+    }
+    .navbar-nav > li > .dropdown-menu > li > a{
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .navbar-nav > li > .dropdown-menu > li > a:hover{
+        background-color: #00000030;
+    }
+    footer {
+        padding: 35px 50px 5px;
+    }
+    .theloai{
+        position: relative;
+        display: block;
+    }
+    .theloai::after{
+        content: "";
+        position: absolute;
+        height: 3px;
+        width: 100%;
+        transform: scaleX(0);
+        background-color: red;
+        bottom: 0;
+        left: 0;
+        transition: all 0.3s ease-in-out;
+    }
+    .theloai:hover::after{
+        transform: scaleX(1);
+    }
+    body {
+        font-family: 'Inter', sans-serif;
+        padding-bottom: 0;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    main {
+        flex: 1;
+    }
+    .container-fluid.text-left.text-md-left{
+        margin-bottom: 35px;
+    }
+    ul.nav.justify-content-center.border-bottom.pb-3.mb-3{
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    .navbar-inverse {
+        background: #ca3433;
+        padding: 5px;
+    }
+
+    a.navbar-brand {
+        color: white;
+    }
+        a.navbar-brand:hover {
+            text-shadow: red -3px 0, cyan 3px 0;
+        }
+    .navbar-inverse .navbar-nav > li > a {
+        color: white;
+    }
+    .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+        color: #fff;
+        background-color: #ca3433;
+    }
+</style>

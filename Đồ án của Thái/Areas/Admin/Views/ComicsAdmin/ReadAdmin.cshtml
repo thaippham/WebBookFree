@@ -1,0 +1,41 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<Đồ_án_của_Thái.Areas.Admin.Models.Chapter>
+@{
+    ViewBag.Title = "ReadAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Book</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Sách</li>
+    </ol>
+    @foreach (var chap in Model)
+    {
+        @Html.ActionLink("Chỉnh sửa trang", "EditChapterAdmin", "ComicsAdmin", new { id = chap.Id }, new { @class = "btn btn-primary" })
+        <div>
+            <h3>Trang: @chap.Trang</h3>
+        </div>
+        <div class="center" style="text-align: center;">
+            <p><iframe src="@chap.PictureChap#toolbar=0" alt="PDF-files" style="width: 100%; height: 1100px;"></iframe></p>
+        </div>
+    }
+</div>
+<div class="text-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">@Html.PagedListPager(Model, page => Url.Action("ReadAdmin", new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)</li>
+        </ul>
+    </nav>
+</div>
+<div>
+    @Html.ActionLink("Back to List", "IndexAdmin", "HomeAdmin", null, new { @class = "btn btn-warning" })
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.pagination a').addClass('page-link');
+        });
+    </script>
+}

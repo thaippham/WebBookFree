@@ -1,0 +1,150 @@
+﻿@model Đồ_án_của_Thái.Areas.Admin.Models.Comic
+
+@{
+    ViewBag.Title = "EditAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Edit Book</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Chỉnh sửa sách</li>
+    </ol>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Id)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NameComic, "Tên", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NameComic, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NameComic, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Author, "Tác giả", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Author, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Author, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, "Mô tả", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", @rows = "10" } })
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    <div id="titleCountdown"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Category, "Thể Loại", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.CategoryId, ViewBag.Categori as SelectList, "", new { @class = "form-control", @value = ViewBag.SelectedCategory })
+                    @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Picture, "Hình ảnh", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <img id="picturePreview" src="@Model.Picture" alt="Preview" style="width: 0; height: 0;max-width: 0" />
+                    @Html.EditorFor(model => model.Picture, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly", @id = "pictureUrl" } })
+                    @Html.ValidationMessageFor(model => model.Picture, "", new { @class = "text-danger" })
+                    <input class="form-control" type="file" name="fileUpload" id="fileUpload" accept="image/*" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    @Html.ActionLink("Hủy", "IndexAdmin", "HomeAdmin", null, new { @class = "btn btn-danger" })
+                    <input type="submit" value="Save" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section upload
+ {
+    <script>
+        $(function () {
+            $('#btnUpload').click(function () {
+                $('#fileUpload').trigger('click');
+            });
+
+            $('#fileUpload').change(function (e) {
+                if (window.FormData !== undefined) {
+                    var fileUpload = e.target;
+                    var files = fileUpload.files;
+
+                    if (files.length > 0) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#picturePreview').attr('src', e.target.result).css('width', '290px').css('height', 'auto').css('max-width', '290px');
+                        };
+                        reader.readAsDataURL(files[0]);
+                    }
+
+                    var formData = new FormData();
+                    formData.append('file', files[0]);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Comics/ProcessUpload',
+                        contentType: false,
+                        processData: false,
+                        data: formData,
+                        success: function (urlImage) {
+                            $('#picturePreview').attr('src', urlImage);
+                            $('#pictureUrl').val(urlImage);
+                        },
+                        error: function (err) {
+                            alert('Error ', err.statusText);
+                        }
+                    });
+                }
+            });
+            $(document).ready(function () {
+                var imageUrl = $('#pictureUrl').val();
+                if (imageUrl) {
+                    $('#picturePreview').attr('src', imageUrl).css('width', '290px').css('height', 'auto').css('max-width', '290px');
+                }
+            });
+        });
+    </script>
+}
+@section count
+{
+    <script>
+        $(document).ready(function () {
+            var maxLength = 1000; // Số ký tự tối đa
+            $('#Title').keyup(function () {
+                var length = $(this).val().length;
+                var countdown = maxLength - length;
+                $('#titleCountdown').text(countdown + ' ký tự còn lại.');
+            });
+        });
+    </script>
+}
+<style>
+    textarea#Title {
+        width: 100%;
+        height: 100px;
+    }
+
+    .form-group {
+        margin: 40px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+</style>

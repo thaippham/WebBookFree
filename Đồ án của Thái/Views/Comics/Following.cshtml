@@ -1,0 +1,191 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Models.Comic>
+@{
+    ViewBag.Title = "Truyện đã follow";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="~/Content/stylesheet.css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<div class="text-center text-uppercase font-weight-bold">
+    <h2 style="font-weight: bold; margin-top:25px;">Đang theo dõi</h2>
+</div>
+<div class="row">
+    @foreach (var comic in Model)
+    {
+        <div class="col-lg-3 col-md-4 col-6c custom-col" style="margin-bottom: 40px;">
+            <div class="text-center clearfix">
+                <div class="card">
+                    <div class="card-details">
+                        <a href="@Url.Action("Detail", "Comics", new {id = comic.Id})">
+                            <img class="img-book" src="@comic.Picture" alt="@comic.NameComic" style="width: 175px; height: 220px;" />
+                        </a>
+                    </div>
+                    <button class="card-button" type="button" data-toggle="modal" data-target="#exampleModal-@comic.Id" style="font-size: 15px;">More info</button>
+                    <div class="modal fade" id="exampleModal-@comic.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="padding: 15px 15px 0px 15px;">
+                                    <button type="button" class="btn btn-danger pull-right" data-dismiss="modal" aria-label="Close">
+                                        <span style="font-size: 18px;" aria-hidden="true">&times;</span>
+                                    </button>
+                                    <h5 class="modal-title" id="exampleModalLabel" style="font-size: 40px;">Chi tiết</h5>
+                                </div>
+                                <div class="modal-body text-left">
+                                    <div>
+                                        <h2 style="font-weight: bold;">@comic.NameComic</h2>
+                                        <div>
+                                            <div class="title">
+                                                <h4><b>Tác giả: </b>@comic.Author</h4>
+                                                <h4><b>Mô tả: </b>@comic.Title</h4>
+                                                <h4><b>Thể loại: </b><a style="color: #337ac1;" href="@Url.Action("TheLoai", "Comics", new {id = comic.CategoryId})">@comic.Category.Name</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    @Html.ActionLink("Đọc luôn", "Read", "Comics", new { id = comic.Id, }, new { @class = "btn btn-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.LogUser != null)
+                    {
+                        if (comic.isShowFollow)
+                        {
+                            <button data-comic-id="@comic.Id" class="btn btn-success btn-sm js-toggle-follow" style="position: absolute; top: 0; left: 71%; outline: none;" title="Follow Sách"><i class="fa fa-heart"></i></button>
+                        }
+                        else
+                        {
+                            <button data-comic-id="@comic.Id" class="btn btn-danger btn-sm js-toggle-follow" style="position: absolute; top: 0; left: 71%; outline: none;" title="Xóa Follow"><i class="fa fa-heart" style="color: red;"></i></button>
+                        }
+                    }
+                    <p style="margin: 10px; font-size: 12px; color: #535353d6; font-style: italic;">
+                        @string.Format("{0:#,##0} Views", comic.Chapters.Sum(chap => chap.View))
+                    </p>
+                    <div class="rating text-left">
+                        @if (ViewBag.AverageRatings.ContainsKey(comic.Id))
+                        {
+                            var averageRating = ViewBag.AverageRatings[comic.Id];
+                            var fullStars = (int)averageRating;
+                            var remainingStars = averageRating - fullStars;
+
+                            for (int i = 1; i <= fullStars; i++)
+                            {
+                                <span class="fa fa-star checked"></span>
+                            }
+                            if (remainingStars > 0)
+                            {
+                                <span class="fa fa-star-half-alt checked"></span>
+                                fullStars++;
+                            }
+                            for (int i = fullStars + 1; i <= 5; i++)
+                            {
+                                <span class="fa fa-star"></span>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-follow").click(function (e) {
+                var button = $(e.target).closest(".js-toggle-follow");
+                var comicId = button.attr("data-comic-id");
+                $.ajax({
+                    type: "POST",
+                    url: "/api/follows/Follow",
+                    data: { comicId: comicId },
+                    success: function () {
+                        if (button.hasClass("btn-success")) {
+                            button.removeClass("btn-success").addClass("btn-danger");
+                            button.find("i").css("color", "red");
+                        } else {
+                            button.removeClass("btn-danger").addClass("btn-success");
+                            button.find("i").css("color", "");
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi thực hiện yêu cầu");
+                    }
+                });
+            });
+        });
+    </script>
+}
+<style>
+    .fa-star {
+        font-size: 20px;
+        color: #a9a9a9;
+    }
+
+        .fa-star.checked {
+            color: #ff9a00cf;
+        }
+
+    .fa-star-half-alt.checked {
+        font-size: 20px;
+        color: #ff9a00cf;
+    }
+    .card {
+        width: 190px;
+        height: 254px;
+        border-radius: 20px;
+        background: #f5f5f5;
+        position: relative;
+        padding: 1.8rem;
+        border: 2px solid #c3c6ce;
+        transition: 0.5s ease-out;
+        overflow: visible;
+    }
+
+    .card-details {
+        color: black;
+        height: 100%;
+        gap: .5em;
+        display: grid;
+        place-content: center;
+    }
+
+    .card-button {
+        transform: translate(-50%, 125%);
+        width: 60%;
+        border-radius: 1rem;
+        border: none;
+        background-color: #008bf8;
+        color: #fff;
+        font-size: 1rem;
+        padding: .5rem 1rem;
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        opacity: 0;
+        transition: 0.3s ease-out;
+    }
+
+    .text-body {
+        color: rgb(134, 134, 134);
+    }
+
+    /*Text*/
+    .text-title {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    /*Hover*/
+    .card:hover {
+        border-color: #008bf8;
+        box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+    }
+
+        .card:hover .card-button {
+            transform: translate(-50%, 50%);
+            opacity: 1;
+        }
+</style>

@@ -1,0 +1,132 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Models.Comic>
+
+@{
+    ViewBag.Title = "Xếp hạng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="~/Content/stylesheet.css" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            margin: 0;
+            padding: 0;
+        }
+
+        .rank-container {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .rank-item {
+            width: 100%;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: row;
+        }
+
+            .rank-item:hover {
+                transform: scale(1.05);
+            }
+
+            .rank-item img {
+                width: 200px;
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .rank-item .rank-position {
+                background-color: #28a745;
+                color: #fff;
+                font-size: 18px;
+                font-weight: bold;
+                padding: 10px;
+                z-index: 1;
+                border-radius: 8px 0 0 0;
+            }
+            .rank-item.rank-gold .rank-position {
+                background-color: #fff72f;
+                width: 7%;
+            }
+
+            .rank-item.rank-silver .rank-position {
+                background-color: #6c757d;
+                width: 5%;
+            }
+
+            .rank-item.rank-bronze .rank-position {
+                background-color: #cd7f32;
+                width: 3%;
+            }
+
+            .rank-item .comic-details {
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+                .rank-item .comic-details h4 {
+                    font-size: 20px;
+                    color: #343a40;
+                    margin-bottom: 10px;
+                }
+
+                .rank-item .comic-details p {
+                    font-size: 16px;
+                    color: #6c757d;
+                    margin-bottom: 5px;
+                }
+
+            .rank-item .week-view {
+                font-size: 18px;
+                font-weight: bold;
+                color: #28a745;
+            }
+    </style>
+</head>
+<div class="text-center text-uppercase font-weight-bold">
+    <h2 style="font-weight: bold; margin-top: 90px;">Xếp hạng tuần</h2>
+</div>
+<ul class="rank-container">
+    @{
+        int index = 1;
+    }
+
+    @foreach (var comic in Model.Take(5))
+    {
+        string rankClass = "";
+
+        if (index == 1)
+        {
+            rankClass = "rank-gold";
+        }
+        else if (index == 2)
+        {
+            rankClass = "rank-silver";
+        }
+        else if (index == 3)
+        {
+            rankClass = "rank-bronze";
+        }
+
+        <li class="rank-item @rankClass">
+            <span class="rank-position">@index</span>
+            <img src="@comic.Picture" alt="@comic.NameComic" />
+            <div class="comic-details">
+                <h4>@comic.NameComic</h4>
+                <p>@comic.Author</p>
+                <p class="week-view">@comic.WeekView Views</p>
+            </div>
+        </li>
+        { index++; }
+    }
+</ul>

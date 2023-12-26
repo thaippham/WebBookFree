@@ -1,0 +1,106 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Areas.Admin.Models.Comic>
+
+@{
+    ViewBag.Title = "IndexAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+</head>
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Book</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">@Html.ActionLink("Thêm Sách", "CreateAdmin", "ComicsAdmin", null, new { @class = "btn btn-primary" })</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Danh sách Book
+        </div>
+        <div class="card-body">
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>AddChapter</th>
+                        <th>Edit</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>AddChapter</th>
+                        <th>Edit</th>
+                        <th>Remove</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var comic in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@comic.Picture" alt="@comic.Picture" style="width: 50px; height: 50px;" />
+                            </td>
+                            <td>@comic.NameComic</td>
+                            <td>@comic.Author</td>
+                            <td>@comic.Category.Name</td>
+                            <td>
+                                <button class="btn btn-outline-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample-@comic.Id" aria-controls="offcanvasExample">
+                                    Xem chi tiết
+                                </button>
+
+                                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample-@comic.Id" aria-labelledby="offcanvasExampleLabel">
+                                    <div class="offcanvas-header">
+                                        <h5 class="offcanvas-title" id="offcanvasExampleLabel">@comic.NameComic</h5>
+                                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body">
+                                        <div style="font-size: 20px;">
+                                            @comic.Title
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                @Html.ActionLink("AddChapter", "CreateChapterAdmin", "ComicsAdmin", new { id = comic.Id }, new { @class = "btn btn-primary" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "EditAdmin", "ComicsAdmin", new { id = comic.Id }, new { @class = "btn btn-success" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("Delete", "DeleteAdmin", "ComicsAdmin", new { id = comic.Id }, new { @class = "btn btn-danger" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script>
+        let table = new DataTable('#myTable', {
+            lengthMenu: [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, 'All']
+            ]
+        });
+    </script>
+}
+<style>
+    div.offcanvas.offcanvas-start {
+        backdrop-filter: blur(25px);
+        background: #ffffff8c;
+    }
+
+</style>

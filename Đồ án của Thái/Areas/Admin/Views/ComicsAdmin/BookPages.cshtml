@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Đồ_án_của_Thái.Areas.Admin.Models.Comic>
+
+@{
+    ViewBag.Title = "IndexAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+</head>
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Book Pages</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Xem trang sách</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Click vào book để xem trang
+        </div>
+        <div class="card-body">
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var comic in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("ReadAdmin", "ComicsAdmin", new {id = comic.Id})">
+                                    <img src="@comic.Picture" alt="@comic.Picture" style="width: 110px; height: auto;" />
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("ReadAdmin", "ComicsAdmin", new {id = comic.Id})">@comic.NameComic</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script>
+
+        let table = new DataTable('#myTable', {
+            lengthMenu: [
+                [5, 10, 25, 50, -1],
+                [5, 10, 25, 50, 'All']
+            ]
+        });
+    </script>
+}
+<style>
+    a {
+        text-decoration: none;
+    }
+</style>
+

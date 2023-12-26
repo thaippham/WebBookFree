@@ -1,0 +1,343 @@
+﻿@model Đồ_án_của_Thái.ViewModels.ComicDetailViewModel
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Chi Tiết";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="~/Content/ratingstyle.css" />
+</head>
+<div class="details">
+
+    <div class="comic-info">
+        <div class="thumbnail">
+            <img src="@Model.Comic.Picture" alt="Comic Picture">
+        </div>
+        <div class="info">
+            <h2>@Model.Comic.NameComic</h2>
+            <h4 class="author">Tác giả: @Model.Comic.Author</h4>
+            <h4><b style="font-size: 20px;">Mô tả:</b> @Model.Comic.Title</h4>
+            <h4>Thể loại: <a href="@Url.Action("TheLoai", "Comics", new {id = Model.Comic.CategoryId})">@Model.Comic.Category.Name</a></h4>
+            <div class="buttons">
+                @if (Model.Chapters != null && Model.Chapters.Any())
+                {
+                    @Html.ActionLink("Đọc", "Read", new { id = Model.Comic.Id }, new { @class = "btn btn-warning" })
+                }
+                <div class="return-button">
+                    @Html.ActionLink("Trở về", "Index", "Home", null, new { @class = "btn btn-warning" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@functions {
+    private int? GetReadingPageFromCookie(int comicId)
+    {
+        var userId = User.Identity.GetUserId();
+        var cookieName = $"ReadingChapter_{userId}_{comicId}";
+        var cookie = HttpContext.Current.Request.Cookies.Get(cookieName);
+
+        if (cookie != null)
+        {
+            int readingPage;
+            if (int.TryParse(cookie.Value, out readingPage))
+            {
+                return readingPage;
+            }
+        }
+
+        return null;
+    }
+}
+@{
+    int? readingPage = GetReadingPageFromCookie(Model.Comic.Id);
+    if (readingPage.HasValue)
+    {
+        <div class="alert alert-info">
+            Bạn đang đọc tới trang @readingPage
+            . <a href="@Url.Action("Read", new { id = Model.Comic.Id, page = readingPage })" style="text-decoration: underline;">Đọc tiếp</a>
+        </div>
+    }
+}
+<h3 id="1">Danh Sách Trang</h3>
+<table id="myTable">
+    <thead>
+        <tr>
+            <th style="width: 70%;">Số chương</th>
+            <th>Lượt xem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var chapter in Model.Chapters)
+        {
+            <tr>
+                <td><a style="font-size: 17px; color: #f4f4f4" href="@Url.Action("Read", new { id = Model.Comic.Id, page = chapter.Trang })" class="Trang">Trang @chapter.Trang</a></td>
+                <td style="font-size: 17px; color: #f4f4f4">@string.Format("{0:#,##0}", chapter.View)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@{
+    if (!User.Identity.IsAuthenticated)
+    {
+        <hr />
+        <div class="alert alert-warning">
+            Bạn cần <a href="/Account/Login">đăng nhập</a> để có thể bình luận.
+        </div>
+    }
+    else
+    {
+        <hr />
+        <h3>Viết Comment</h3>
+        using (Html.BeginForm("Comment", "Comics", new { id = Model.Comic.Id }, FormMethod.Post, new { id = "commentForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BinhLuan, "Nội dung", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-8">
+                        @Html.TextAreaFor(model => model.BinhLuan, new { @class = "form-control", id = "commentTextarea", placeholder = "Viết comment, cảm nhận của bạn về cuốn sách...", @rows = 3 })
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="rating col-md-4">
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5"></label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4"></label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3"></label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2"></label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1"></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Send" class="btn btn-primary" id="sendButton" disabled />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+<h3>Comment</h3>
+<ul id="commentList" style="list-style: none;">
+    @foreach (var comment in Model.Comments)
+    {
+        @Html.Partial("_CommentPartial", comment)
+    }
+</ul>
+<script>
+    var commentTextarea = document.getElementById('commentTextarea');
+    var sendButton = document.getElementById('sendButton');
+    var ratingStars = document.getElementsByName('rating');
+    commentTextarea.addEventListener('input', function () {
+        var isCommentNotEmpty = this.value.trim() !== '';
+        var isRatingSelected = Array.from(ratingStars).some(star => star.checked);
+        sendButton.disabled = !(isCommentNotEmpty && isRatingSelected);
+    });
+    ratingStars.forEach(function (star) {
+        star.addEventListener('change', function () {
+            var isCommentNotEmpty = commentTextarea.value.trim() !== '';
+            var isRatingSelected = Array.from(ratingStars).some(star => star.checked);
+            sendButton.disabled = !(isCommentNotEmpty && isRatingSelected);
+        });
+    });
+    $(document).ready(function () {
+        $("#commentForm").submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                type: "POST",
+                url: $(this).attr("action"),
+                data: formData,
+                success: function (result) {
+                    $("#commentList").prepend(result);
+                    $("#commentTextarea").val('');
+                    sendButton.disabled = true;
+                },
+                error: function () {
+                    alert("Có lỗi khi gửi comment");
+                }
+            });
+        });
+    });
+    function submitForm() {
+        var form = document.getElementById('sortForm');
+        if (form) {
+            form.submit();
+        }
+    }
+</script>
+@section scripts{
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script>
+        let table = new DataTable('#myTable');
+    </script>
+}
+<style>
+    .rating .fa-star.checked {
+        color: #ffc300;
+        transform: scale(1.2);
+        transition: color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .fa-star{
+        margin-right: 7px;
+    }
+    #sortOrde {
+        width: auto;
+        border-radius: 24px;
+        background-color: #0000007a;
+        color: white;
+        box-shadow: 1px 1px 8px 0px #00000099;
+        border: none;
+    }
+
+    .Trang:hover {
+        color: black;
+    }
+
+    input#sendButton:focus {
+        outline: none;
+    }
+
+    .thumbnail {
+        border: none;
+    }
+
+    .info > h4 > a {
+        color: #8ccdfc;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #000000ab;
+        color: wheat;
+    }
+
+    .time-ago {
+        color: #666;
+        font-size: 0.8em;
+    }
+
+    td {
+        background-color: #0000006b;
+    }
+
+    textarea#BinhLuan {
+        width: 100%;
+        height: 100%;
+    }
+
+    .info > h4, .h4, h5, .h5, h6, .h6 {
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
+
+    .btn-warning {
+        color: #ffffffa3;
+        font-size: 20px;
+        background-color: #ffffff2e;
+        border-color: #b8b8b814;
+        box-shadow: 1px 1px 6px 0px #00000094;
+    }
+
+        .btn-warning:hover {
+            background-color: #ffffff2e;
+            box-shadow: 4px 4px 8px -1px #000000cc;
+            border-color: #b8b8b814;
+        }
+
+    .comic-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .thumbnail {
+        width: 190px;
+        flex: 0 0 190px;
+    }
+
+    .info {
+        margin-left: 16px;
+        flex-grow: 1;
+    }
+
+    .buttons {
+        display: flex;
+    }
+
+    .return-button {
+        margin-left: 8px;
+    }
+
+
+    .thumbnail {
+        margin-bottom: 16px;
+    }
+
+    .details {
+        margin: 90px 10px;
+        padding: 0 40px;
+        display: flex;
+        border-radius: 10px;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.50);
+        backdrop-filter: blur(10px);
+    }
+
+    .comic-container {
+        text-align: center;
+        background-color: white; /* Bạn có thể điều chỉnh màu sắc theo nhu cầu */
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .comic-info {
+        display: flex;
+        margin: 40px 5px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .info {
+        margin-left: 20px;
+    }
+
+        .info > h2, .author {
+            text-align: center;
+        }
+
+        .info > h2, h4 {
+            color: #ffffffb0;
+        }
+</style>
+

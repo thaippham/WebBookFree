@@ -1,0 +1,81 @@
+﻿@model Đồ_án_của_Thái.Areas.Admin.Models.Comic
+
+@{
+    ViewBag.Title = "DeleteAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Delete Book</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active" style="color: red;">Bạn có chắc muốn xóa SÁCH này?</li>
+    </ol>
+    @using (Html.BeginForm("DeleteAdmin", "ComicsAdmin"))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NameComic, "Tên", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.NameComic, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Author, "Tác giả", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.Author, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Category.Name, "Thể loại", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.Category.Name, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, "Mô tả", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Picture, "Hình ảnh", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <img src="@Model.Picture" class="anh-sach" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    @Html.ActionLink("Hủy", "IndexAdmin", "HomeAdmin", null, new { @class = "btn btn-primary" })
+                    <input type="submit" value="Xóa" class="btn btn-danger" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .form-horizontal .control-label {
+        padding-top: 0px;
+    }
+
+    .form-group > .col-md-10 > .anh-sach {
+        width: 100px;
+        height: auto;
+    }
+
+    .form-group {
+        display: flex;
+        margin-bottom: 10px;
+    }
+</style>

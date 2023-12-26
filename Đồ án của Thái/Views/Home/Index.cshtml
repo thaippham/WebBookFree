@@ -1,0 +1,247 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<Đồ_án_của_Thái.Models.Comic>
+@{
+    ViewBag.Title = "HOME";
+}
+<head>
+    <link rel="stylesheet" href="~/Content/stylesheet.css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<div class="slide-container">
+    <div class="w3-content w3-display-container">
+        <img class="mySlides" src="~/Content/images/peakpx.jpg" style="width:100%">
+        <img class="mySlides" src="~/Content/images/bood-cf.jpg" style="width:100%">
+        <img class="mySlides" src="~/Content/images/magic-book.jpg" style="width:100%">
+        <div class="w3-center w3-container w3-section w3-large w3-text-white w3-display-bottommiddle" style="width:100%">
+            <div class="w3-left w3-hover-text-khaki" onclick="plusDivs(-1)">&#10094;</div>
+            <div class="w3-right w3-hover-text-khaki" onclick="plusDivs(1)">&#10095;</div>
+            <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(1)"></span>
+            <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(2)"></span>
+            <span class="w3-badge demo w3-border w3-transparent w3-hover-white" onclick="currentDiv(3)"></span>
+        </div>
+    </div>
+</div>
+<div class="text-center text-uppercase font-weight-bold">
+    <h2 style="font-weight: bold;">Sách</h2>
+</div>
+<div class="text-left" style="margin-bottom: 20px;">
+    <form id="sortForm">
+        @Html.DropDownList("sortOrder", new List<SelectListItem>
+        {
+            new SelectListItem { Text = "Mặc định", Value = "Default" },
+            new SelectListItem { Text = "Lượt xem", Value = "Views" },
+            new SelectListItem { Text = "Đánh giá", Value = "Rating" },
+            new SelectListItem { Text = "A-Z", Value = "AZ" },
+            new SelectListItem { Text = "Z-A", Value = "ZA" },
+        }, new { @class = "form-control", onchange = "submitForm();" })
+    </form>
+</div>
+<div id="comicListContainer">
+    @Html.Partial("_ComicListPartial", Model)
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#comicListContainer").on("click", ".js-toggle-follow", function (e) {
+                var button = $(e.target).closest(".js-toggle-follow");
+                var comicId = button.attr("data-comic-id");
+                $.ajax({
+                    type: "POST",
+                    url: "/api/follows/Follow",
+                    data: { comicId: comicId },
+                    success: function () {
+                        if (button.hasClass("btn-success")) {
+                            button.removeClass("btn-success").addClass("btn-danger");
+                            button.find("i").css("color", "red");
+                        } else {
+                            button.removeClass("btn-danger").addClass("btn-success");
+                            button.find("i").css("color", "");
+                        }
+                    },
+                    error: function () {
+                        alert("Có lỗi xảy ra khi thực hiện yêu cầu");
+                    }
+                });
+            });
+            $(document).ready(function () {
+                $("#sortOrder").change(function () {
+                    submitForm();
+                });
+            });
+        });
+        
+        function submitForm() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/Index",
+                data: $("#sortForm").serialize(),
+                success: function (result) {
+                    $("#comicListContainer").html(result);
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra khi thực hiện yêu cầu sắp xếp");
+                }
+            });
+        }
+        var slideIndex = 1;
+        showDivs(slideIndex);
+
+        function plusDivs(n) {
+            showDivs(slideIndex += n);
+        }
+
+        function currentDiv(n) {
+            showDivs(slideIndex = n);
+        }
+
+        function showDivs(n) {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("demo");
+            if (n > x.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = x.length }
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" w3-white", "");
+            }
+            x[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " w3-white";
+        }
+        function autoSlide() {
+            plusDivs(1);
+            setTimeout(autoSlide, 5000);
+        }
+        autoSlide();
+    </script>
+}
+<style>
+    .fa-star {
+        font-size: 20px;
+        color: #a9a9a9;
+    }
+
+        .fa-star.checked {
+            color: #ff9a00cf;
+        }
+    .fa-star-half-alt.checked {
+        font-size: 20px;
+        color: #ff9a00cf;
+    }
+    #sortOrder {
+        width: auto;
+        border-radius: 24px;
+        background-color: #0000007a;
+        color: white;
+        box-shadow: 1px 1px 8px 0px #00000099;
+        border: none;
+    }
+    .card {
+        width: 190px;
+        height: 254px;
+        border-radius: 20px;
+        background: #f5f5f5;
+        position: relative;
+        padding: 1.8rem;
+        border: 2px solid #c3c6ce;
+        transition: 0.5s ease-out;
+        overflow: visible;
+    }
+
+    .card-details {
+        color: black;
+        height: 100%;
+        gap: .5em;
+        display: grid;
+        place-content: center;
+    }
+
+    .card-button {
+        transform: translate(-50%, 125%);
+        width: 60%;
+        border-radius: 1rem;
+        border: none;
+        background-color: #008bf8;
+        color: #fff;
+        font-size: 1rem;
+        padding: .5rem 1rem;
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        opacity: 0;
+        transition: 0.3s ease-out;
+    }
+
+    .text-body {
+        color: rgb(134, 134, 134);
+    }
+
+    /*Text*/
+    .text-title {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+    /*Hover*/
+    .card:hover {
+        border-color: #008bf8;
+        box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+    }
+
+        .card:hover .card-button {
+            transform: translate(-50%, 50%);
+            opacity: 1;
+        }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    .mySlides {
+        display: none
+    }
+
+    .w3-left, .w3-right, .w3-badge {
+        cursor: pointer
+    }
+
+    .w3-badge {
+        height: 13px;
+        width: 13px;
+        padding: 0
+    }
+
+    .w3-content {
+        max-width: 100%;
+    }
+
+    .modal-content {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.55);
+    }
+
+    .slide-container {
+        margin: 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .w3-content.w3-display-container {
+        width: 100%;
+        height: auto;
+        margin: 10px 0;
+    }
+
+        .w3-content.w3-display-container > image {
+            max-width: 100%;
+            height: auto;
+        }
+
+    button.btn.btn-sm.js-toggle-follow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        outline: none;
+    }
+</style>

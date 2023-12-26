@@ -1,0 +1,34 @@
+﻿ul.nav li.nav-item a:hover {
+    background-color: transparent !important;
+}
+.nav > .nav-item > a{
+    font-size: 40px;
+    color: darkgray;
+}
+   
+a.fab.fa-facebook-f.px-2:hover {
+    color: #0866ff;
+}
+a.fab.fa-github.px-2:hover{
+    color: white;
+}
+a.fab.fa-google-plus-g.px-2:hover {
+    background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+a.fab.fa-instagram.px-2:hover {
+    background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+a.fab.fa-pinterest.px-2:hover {
+    color: red;
+}
+.footer-copyright.text-center.py-3 > a {
+    text-decoration: none;
+    color: #aaa9a9;
+}
+
