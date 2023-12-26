@@ -22,7 +22,7 @@
                 @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Employee"))
                 {
                     <li>
-                        <a href="@Url.Action("HomeAdmin", "Admin")">Trang Admin</a>
+                        <a href="@Url.Action("IndexAdmin", "HomeAdmin", new {area = "Admin"})">Trang Admin</a>
                     </li>
                 }
                 <li><a href="@Url.Action("Following", "Comics")">Đang theo dõi</a></li>
