@@ -17,7 +17,7 @@ namespace Đồ_án_của_Thái
     {
         public void Configuration(IAppBuilder app)
         {
-            GlobalConfiguration.Configuration.UseSqlServerStorage("Data Source=THAI\\VUSSDIE; Initial Catalog=Book;user id=sa; pwd = 1234;");
+            GlobalConfiguration.Configuration.UseSqlServerStorage("Data Source=THAI\\VUSSDIE; Initial Catalog=Book;user id=sa; pwd = 1234;Trusted_Connection=True;TrustServerCertificate=True");
             app.UseHangfireDashboard();
             app.UseHangfireServer();
             ConfigureAuth(app);
