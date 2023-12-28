@@ -24,7 +24,7 @@
 <div class="text-center text-uppercase font-weight-bold">
     <h2 style="font-weight: bold;">Sách</h2>
 </div>
-<div class="text-left" style="margin-bottom: 20px;">
+<div class="text-left container" style="margin-bottom: 20px;">
     <form id="sortForm">
         @Html.DropDownList("sortOrder", new List<SelectListItem>
         {
@@ -36,7 +36,7 @@
         }, new { @class = "form-control", onchange = "submitForm();" })
     </form>
 </div>
-<div id="comicListContainer">
+<div id="comicListContainer" class="container">
     @Html.Partial("_ComicListPartial", Model)
 </div>
 @section scripts{

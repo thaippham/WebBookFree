@@ -9,133 +9,135 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
     <link rel="stylesheet" href="~/Content/ratingstyle.css" />
 </head>
-<div class="details">
+<div class="container">
+    <div class="details">
 
-    <div class="comic-info">
-        <div class="thumbnail">
-            <img src="@Model.Comic.Picture" alt="Comic Picture">
-        </div>
-        <div class="info">
-            <h2>@Model.Comic.NameComic</h2>
-            <h4 class="author">Tác giả: @Model.Comic.Author</h4>
-            <h4><b style="font-size: 20px;">Mô tả:</b> @Model.Comic.Title</h4>
-            <h4>Thể loại: <a href="@Url.Action("TheLoai", "Comics", new {id = Model.Comic.CategoryId})">@Model.Comic.Category.Name</a></h4>
-            <div class="buttons">
-                @if (Model.Chapters != null && Model.Chapters.Any())
-                {
-                    @Html.ActionLink("Đọc", "Read", new { id = Model.Comic.Id }, new { @class = "btn btn-warning" })
-                }
-                <div class="return-button">
-                    @Html.ActionLink("Trở về", "Index", "Home", null, new { @class = "btn btn-warning" })
+        <div class="comic-info">
+            <div class="thumbnail">
+                <img src="@Model.Comic.Picture" alt="Comic Picture">
+            </div>
+            <div class="info">
+                <h2>@Model.Comic.NameComic</h2>
+                <h4 class="author">Tác giả: @Model.Comic.Author</h4>
+                <h4><b style="font-size: 20px;">Mô tả:</b> @Model.Comic.Title</h4>
+                <h4>Thể loại: <a href="@Url.Action("TheLoai", "Comics", new {id = Model.Comic.CategoryId})">@Model.Comic.Category.Name</a></h4>
+                <div class="buttons">
+                    @if (Model.Chapters != null && Model.Chapters.Any())
+                    {
+                        @Html.ActionLink("Đọc", "Read", new { id = Model.Comic.Id }, new { @class = "btn btn-warning" })
+                    }
+                    <div class="return-button">
+                        @Html.ActionLink("Trở về", "Index", "Home", null, new { @class = "btn btn-warning" })
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@functions {
-    private int? GetReadingPageFromCookie(int comicId)
-    {
-        var userId = User.Identity.GetUserId();
-        var cookieName = $"ReadingChapter_{userId}_{comicId}";
-        var cookie = HttpContext.Current.Request.Cookies.Get(cookieName);
-
-        if (cookie != null)
+    @functions {
+        private int? GetReadingPageFromCookie(int comicId)
         {
-            int readingPage;
-            if (int.TryParse(cookie.Value, out readingPage))
+            var userId = User.Identity.GetUserId();
+            var cookieName = $"ReadingChapter_{userId}_{comicId}";
+            var cookie = HttpContext.Current.Request.Cookies.Get(cookieName);
+
+            if (cookie != null)
             {
-                return readingPage;
+                int readingPage;
+                if (int.TryParse(cookie.Value, out readingPage))
+                {
+                    return readingPage;
+                }
             }
+
+            return null;
         }
-
-        return null;
     }
-}
-@{
-    int? readingPage = GetReadingPageFromCookie(Model.Comic.Id);
-    if (readingPage.HasValue)
-    {
-        <div class="alert alert-info">
-            Bạn đang đọc tới trang @readingPage
-            . <a href="@Url.Action("Read", new { id = Model.Comic.Id, page = readingPage })" style="text-decoration: underline;">Đọc tiếp</a>
-        </div>
-    }
-}
-<h3 id="1">Danh Sách Trang</h3>
-<table id="myTable">
-    <thead>
-        <tr>
-            <th style="width: 70%;">Số chương</th>
-            <th>Lượt xem</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var chapter in Model.Chapters)
+    @{
+        int? readingPage = GetReadingPageFromCookie(Model.Comic.Id);
+        if (readingPage.HasValue)
         {
-            <tr>
-                <td><a style="font-size: 17px; color: #f4f4f4" href="@Url.Action("Read", new { id = Model.Comic.Id, page = chapter.Trang })" class="Trang">Trang @chapter.Trang</a></td>
-                <td style="font-size: 17px; color: #f4f4f4">@string.Format("{0:#,##0}", chapter.View)</td>
-            </tr>
-        }
-    </tbody>
-</table>
-@{
-    if (!User.Identity.IsAuthenticated)
-    {
-        <hr />
-        <div class="alert alert-warning">
-            Bạn cần <a href="/Account/Login">đăng nhập</a> để có thể bình luận.
-        </div>
-    }
-    else
-    {
-        <hr />
-        <h3>Viết Comment</h3>
-        using (Html.BeginForm("Comment", "Comics", new { id = Model.Comic.Id }, FormMethod.Post, new { id = "commentForm" }))
-        {
-            @Html.AntiForgeryToken()
-
-            <div class="form-horizontal">
-
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <div class="form-group">
-                    @Html.LabelFor(model => model.BinhLuan, "Nội dung", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-8">
-                        @Html.TextAreaFor(model => model.BinhLuan, new { @class = "form-control", id = "commentTextarea", placeholder = "Viết comment, cảm nhận của bạn về cuốn sách...", @rows = 3 })
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="rating col-md-4">
-                        <input type="radio" id="star5" name="rating" value="5">
-                        <label for="star5"></label>
-                        <input type="radio" id="star4" name="rating" value="4">
-                        <label for="star4"></label>
-                        <input type="radio" id="star3" name="rating" value="3">
-                        <label for="star3"></label>
-                        <input type="radio" id="star2" name="rating" value="2">
-                        <label for="star2"></label>
-                        <input type="radio" id="star1" name="rating" value="1">
-                        <label for="star1"></label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Send" class="btn btn-primary" id="sendButton" disabled />
-                    </div>
-                </div>
+            <div class="alert alert-info">
+                Bạn đang đọc tới trang @readingPage
+                . <a href="@Url.Action("Read", new { id = Model.Comic.Id, page = readingPage })" style="text-decoration: underline;">Đọc tiếp</a>
             </div>
         }
     }
-}
-<h3>Comment</h3>
-<ul id="commentList" style="list-style: none;">
-    @foreach (var comment in Model.Comments)
-    {
-        @Html.Partial("_CommentPartial", comment)
+    <h3 id="1">Danh Sách Trang</h3>
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th style="width: 70%;">Số chương</th>
+                <th>Lượt xem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var chapter in Model.Chapters)
+            {
+                <tr>
+                    <td><a style="font-size: 17px; color: #f4f4f4" href="@Url.Action("Read", new { id = Model.Comic.Id, page = chapter.Trang })" class="Trang">Trang @chapter.Trang</a></td>
+                    <td style="font-size: 17px; color: #f4f4f4">@string.Format("{0:#,##0}", chapter.View)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @{
+        if (!User.Identity.IsAuthenticated)
+        {
+            <hr />
+            <div class="alert alert-warning">
+                Bạn cần <a href="/Account/Login">đăng nhập</a> để có thể bình luận.
+            </div>
+        }
+        else
+        {
+            <hr />
+            <h3>Viết Comment</h3>
+            using (Html.BeginForm("Comment", "Comics", new { id = Model.Comic.Id }, FormMethod.Post, new { id = "commentForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.BinhLuan, "Nội dung", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(model => model.BinhLuan, new { @class = "form-control", id = "commentTextarea", placeholder = "Viết comment, cảm nhận của bạn về cuốn sách...", @rows = 3 })
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="rating col-md-4">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5"></label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4"></label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3"></label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2"></label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Send" class="btn btn-primary" id="sendButton" disabled />
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     }
-</ul>
+    <h3>Comment</h3>
+    <ul id="commentList" style="list-style: none;">
+        @foreach (var comment in Model.Comments)
+        {
+            @Html.Partial("_CommentPartial", comment)
+        }
+    </ul>
+</div>
 <script>
     var commentTextarea = document.getElementById('commentTextarea');
     var sendButton = document.getElementById('sendButton');

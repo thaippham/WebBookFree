@@ -96,37 +96,39 @@
 <div class="text-center text-uppercase font-weight-bold">
     <h2 style="font-weight: bold; margin-top: 90px;">Xếp hạng tuần</h2>
 </div>
-<ul class="rank-container">
-    @{
-        int index = 1;
-    }
-
-    @foreach (var comic in Model.Take(5))
-    {
-        string rankClass = "";
-
-        if (index == 1)
-        {
-            rankClass = "rank-gold";
-        }
-        else if (index == 2)
-        {
-            rankClass = "rank-silver";
-        }
-        else if (index == 3)
-        {
-            rankClass = "rank-bronze";
+<div class="container">
+    <ul class="rank-container">
+        @{
+            int index = 1;
         }
 
-        <li class="rank-item @rankClass">
-            <span class="rank-position">@index</span>
-            <img src="@comic.Picture" alt="@comic.NameComic" />
-            <div class="comic-details">
-                <h4>@comic.NameComic</h4>
-                <p>@comic.Author</p>
-                <p class="week-view">@comic.WeekView Views</p>
-            </div>
-        </li>
-        { index++; }
-    }
-</ul>
+        @foreach (var comic in Model.Take(5))
+        {
+            string rankClass = "";
+
+            if (index == 1)
+            {
+                rankClass = "rank-gold";
+            }
+            else if (index == 2)
+            {
+                rankClass = "rank-silver";
+            }
+            else if (index == 3)
+            {
+                rankClass = "rank-bronze";
+            }
+
+            <li class="rank-item @rankClass">
+                <span class="rank-position">@index</span>
+                <img src="@comic.Picture" alt="@comic.NameComic" />
+                <div class="comic-details">
+                    <h4>@comic.NameComic</h4>
+                    <p>@comic.Author</p>
+                    <p class="week-view">@comic.WeekView Views</p>
+                </div>
+            </li>
+            { index++; }
+        }
+    </ul>
+</div>
