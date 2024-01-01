@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using Đồ_án_của_Thái.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.IO;
+using System.Web.WebPages;
 
 namespace Đồ_án_của_Thái.Controllers
 {
@@ -177,13 +178,17 @@ namespace Đồ_án_của_Thái.Controllers
             ViewBag.Categories = categorys;
             if (ModelState.IsValid)
             {
-                string imagePath = "/Content/images/" + Guid.NewGuid() + ".png";
-                string physicalPath = Server.MapPath(imagePath);
-                byte[] bytes = Convert.FromBase64String(imgbase64.Split(',')[1]);
-                FileStream stream = new FileStream(physicalPath, FileMode.Create);
-                stream.Write(bytes, 0, bytes.Length);
-                stream.Flush();
-                TempData["Success"] = "Image uploaded successfully";
+                string imagePath = null;
+                if (!string.IsNullOrEmpty(imgbase64))
+                {
+                    imagePath = "/Content/images/" + Guid.NewGuid() + ".png";
+                    string physicalPath = Server.MapPath(imagePath);
+                    byte[] bytes = Convert.FromBase64String(imgbase64.Split(',')[1]);
+                    FileStream stream = new FileStream(physicalPath, FileMode.Create);
+                    stream.Write(bytes, 0, bytes.Length);
+                    stream.Flush();
+                    TempData["Success"] = "Image uploaded successfully";
+                }
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Name, Avatar = imagePath };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

@@ -24,6 +24,7 @@ namespace Đồ_án_của_Thái.Controllers
         {
 
             var userId = User.Identity.GetUserId();
+            var book = _dbContext.Comics.FirstOrDefault(b => b.Id == followDto.ComicId);
             var follow = new Follow
             {
                 ComicId = followDto.ComicId,
@@ -33,14 +34,15 @@ namespace Đồ_án_của_Thái.Controllers
             if(find == null)
             {
                 _dbContext.Follows.Add(follow);
+                _dbContext.SaveChanges();
+                return Json(new { success = true, message = $"{book.NameComic} đã được thêm vào danh sách follow!" });
             }
             else
             {
                 _dbContext.Follows.Remove(find);
+                _dbContext.SaveChanges();
+                return Json(new { success = false, message = $"{book.NameComic} đã được xóa khỏi danh sách follow!" });
             }
-            
-            _dbContext.SaveChanges();
-            return Json(new { success = true });
         }
     }
 }

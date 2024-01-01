@@ -6,6 +6,7 @@
 <head>
     <link rel="stylesheet" href="~/Content/stylesheet.css" />
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 <div class="slide-container">
     <div class="w3-content w3-display-container">
@@ -40,6 +41,14 @@
     @Html.Partial("_ComicListPartial", Model)
 </div>
 @section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "closeButton": true,
+            "progressBar": true
+        };
+    </script>
     <script>
         $(document).ready(function () {
             $("#comicListContainer").on("click", ".js-toggle-follow", function (e) {
@@ -49,17 +58,19 @@
                     type: "POST",
                     url: "/api/follows/Follow",
                     data: { comicId: comicId },
-                    success: function () {
+                    success: function (response) {
                         if (button.hasClass("btn-success")) {
                             button.removeClass("btn-success").addClass("btn-danger");
                             button.find("i").css("color", "red");
+                            toastr.success(response.message);
                         } else {
                             button.removeClass("btn-danger").addClass("btn-success");
                             button.find("i").css("color", "");
+                            toastr.error(response.message);
                         }
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra khi thực hiện yêu cầu");
+                        toastr.error('Có lỗi xảy ra khi thực hiện yêu cầu.');
                     }
                 });
             });
@@ -69,7 +80,7 @@
                 });
             });
         });
-        
+
         function submitForm() {
             $.ajax({
                 type: "POST",
@@ -125,10 +136,12 @@
         .fa-star.checked {
             color: #ff9a00cf;
         }
+
     .fa-star-half-alt.checked {
         font-size: 20px;
         color: #ff9a00cf;
     }
+
     #sortOrder {
         width: auto;
         border-radius: 24px;
@@ -137,6 +150,7 @@
         box-shadow: 1px 1px 8px 0px #00000099;
         border: none;
     }
+
     .card {
         width: 190px;
         height: 254px;
@@ -197,10 +211,12 @@
     a:hover {
         text-decoration: none;
     }
+
     img.mySlides {
         height: 500px;
         background-size: cover;
     }
+
     .mySlides {
         display: none
     }

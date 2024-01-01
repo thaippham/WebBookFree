@@ -6,6 +6,7 @@
 <head>
     <link rel="stylesheet" href="~/Content/stylesheet.css" />
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 <div class="text-center text-uppercase font-weight-bold">
     <h2 style="font-weight: bold; margin-top:25px;">Đang theo dõi</h2>
@@ -92,7 +93,13 @@
     }
 </div>
 @section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
+        toastr.options = {
+            "positionClass": "toast-bottom-right",
+            "closeButton": true,
+            "progressBar": true
+        };
         $(document).ready(function () {
             $(".js-toggle-follow").click(function (e) {
                 var button = $(e.target).closest(".js-toggle-follow");
@@ -101,17 +108,19 @@
                     type: "POST",
                     url: "/api/follows/Follow",
                     data: { comicId: comicId },
-                    success: function () {
+                    success: function (response) {
                         if (button.hasClass("btn-success")) {
                             button.removeClass("btn-success").addClass("btn-danger");
                             button.find("i").css("color", "red");
+                            toastr.success(response.message);
                         } else {
                             button.removeClass("btn-danger").addClass("btn-success");
                             button.find("i").css("color", "");
+                            toastr.error(response.message);
                         }
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra khi thực hiện yêu cầu");
+                        toastr.error('Có lỗi xảy ra khi thực hiện yêu cầu.');
                     }
                 });
             });
@@ -132,6 +141,7 @@
         font-size: 20px;
         color: #ff9a00cf;
     }
+
     .card {
         width: 190px;
         height: 254px;
