@@ -293,8 +293,8 @@ namespace Đồ_án_của_Thái.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult EditChapterAdmin(Chapter chapters, int id) { 
             var chapter = context.Chapters.FirstOrDefault(c => c.Id == chapters.Id);
-            var comics = context.Comics.SingleOrDefault(c => c.Id == id);
-            chapter.ComicId = comics.Id;
+            var comics = context.Comics.FirstOrDefault(c => c.Id == id);
+            chapter.ComicId = chapter.ComicId;
             chapter.Trang = chapters.Trang;
             chapter.PictureChap = chapters.PictureChap;
             context.SaveChanges();
