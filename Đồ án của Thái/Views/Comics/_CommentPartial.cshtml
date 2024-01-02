@@ -13,14 +13,7 @@
             </div>
         }
         <div>
-            @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Employee"))
-            {
-                <p style="font-weight: bold; color: #c95b5b; margin: 0px 10px;">@Model.NameUser.Name said:</p>
-            }
-            else
-            {
-                <p style="font-weight: bold; color: #abdbff; margin: 0px 10px;">@Model.NameUser.Name said:</p>
-            }
+            <p style="font-weight: bold; color: #abdbff; margin: 0px 10px;">@Model.NameUser.Name said:</p>
             <p style="margin: 7px 15px 0; color: #ffffffde; font-size: 17px;">- @Model.BinhLuan</p>
             <div class="rating" style="margin:6px 12px;">
                 @for (int i = 1; i <= 5; i++)
