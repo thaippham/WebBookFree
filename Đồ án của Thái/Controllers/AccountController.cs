@@ -178,6 +178,11 @@ namespace Đồ_án_của_Thái.Controllers
             ViewBag.Categories = categorys;
             if (ModelState.IsValid)
             {
+                if (model.Name.Equals("Admin", StringComparison.OrdinalIgnoreCase) || model.Name.Equals("Manager", StringComparison.OrdinalIgnoreCase ) || model.Name.Equals("Employee", StringComparison.OrdinalIgnoreCase))
+                {
+                    ModelState.AddModelError("", "The name cannot be 'admin' or 'manager' or 'Employee'. Please choose a different name.");
+                    return View(model);
+                }
                 string imagePath = null;
                 if (!string.IsNullOrEmpty(imgbase64))
                 {

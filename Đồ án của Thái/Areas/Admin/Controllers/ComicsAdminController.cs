@@ -10,6 +10,7 @@ using PagedList;
 using System.Data.Entity;
 using System.Web.Security;
 using System.Diagnostics;
+using System.Web.UI;
 
 
 namespace Đồ_án_của_Thái.Areas.Admin.Controllers
@@ -53,7 +54,7 @@ namespace Đồ_án_của_Thái.Areas.Admin.Controllers
         public ActionResult AccountRole()
         {
             var usernonRole = context.Users
-                .Where(user => context.Roles.Any(role => role.Name == user.Name && role.Id != "d38a28e8-eb00-471d-b823-443949cf8424"))
+                .Where(user => context.Roles.Any(role => role.Name == user.Name && role.Name != "ADMIN"))
                 .ToList();
             return View(usernonRole);
         }
@@ -298,7 +299,7 @@ namespace Đồ_án_của_Thái.Areas.Admin.Controllers
             chapter.Trang = chapters.Trang;
             chapter.PictureChap = chapters.PictureChap;
             context.SaveChanges();
-            return RedirectToAction("ReadAdmin", new { id = chapter.Id});
+            return RedirectToAction("ReadAdmin", new { id = chapter.ComicId});
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
