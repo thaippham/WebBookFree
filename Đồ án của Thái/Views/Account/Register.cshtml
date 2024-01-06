@@ -5,6 +5,7 @@
 
 <head>
     <link rel="stylesheet" href="~/Content/styless.css">
+    <link rel="stylesheet" href="~/Content/RegisterLoad.css">
     <link href="https://fonts.googleapis.com/css2?family=Nova+Square&display=swap" rel="stylesheet">
 </head>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -42,7 +43,10 @@
             <label for="Avatar">Avatar</label>
             <input id="file" accept="image/*" type="file"><input type="hidden" name="imgbase64" id="imgbase64" />
             <img id="profilepic">
-            <input type="submit" value="Register">
+            <input type="submit" id="registerButton" value="Register">
+            <div class="sss" style="display: inline-block; margin-top: 10px;">
+                <div class="spinner" id="spinner" style="display:none;"></div>
+            </div>
         }
         <div class="links">
             <a href="/Account/Login">You had account. Login</a>
@@ -93,6 +97,12 @@
                         })) {
                             alert("Please check file type !!!");
                         }
+                    });
+                });
+                $(document).ready(function () {
+                    $("#registerButton").click(function () {
+                        $("#spinner").show();
+
                     });
                 });
             </script>

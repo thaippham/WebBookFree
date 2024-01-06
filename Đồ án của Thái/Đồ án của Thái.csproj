@@ -316,6 +316,7 @@
     <Content Include="Content\jscss\iEdit.js" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\ratingstyle.css" />
+    <Content Include="Content\RegisterLoad.css" />
     <Content Include="Content\style.css" />
     <Content Include="Content\stylesheet.css" />
     <Content Include="Content\styless.css" />
